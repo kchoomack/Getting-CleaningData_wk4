@@ -1,0 +1,77 @@
+---
+title: "CodeBook_FitnessData"
+author: "Kate Choomack"
+date: "August 14, 2016"
+output: html_document
+---
+###Human Activity Recognition user Smartphones Data Set
+
+#DataSet Information
+*from the UCI Machine Learning Repository:  http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones#*
+
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data. 
+
+The sensor signals (accelerometer and gyroscope) were pre-processed by applying noise filters and then sampled in fixed-width sliding windows of 2.56 sec and 50% overlap (128 readings/window). The sensor acceleration signal, which has gravitational and body motion components, was separated using a Butterworth low-pass filter into body acceleration and gravity. The gravitational force is assumed to have only low frequency components, therefore a filter with 0.3 Hz cutoff frequency was used. From each window, a vector of features was obtained by calculating variables from the time and frequency domain.
+
+#Attribute Information
+
+For each record in the dataset it is provided: 
+- Triaxial acceleration from the accelerometer (total acceleration) and the estimated body acceleration. 
+- Triaxial Angular velocity from the gyroscope. 
+- A 561-feature vector with time and frequency domain variables. 
+- Its activity label. 
+- An identifier of the subject who carried out the experiment.
+
+#Libraries Used
+
+The following R libraries were used to create the tidy data set:
+-dplyr
+-data.table
+-tidyr
+
+#Steps in the script
+1 - Each file was read into a data table using the read.table funtion. 
+The following variabls were used for each corresponding file:
+- subject_train = subject_train.txt
+- X_train represents X_train.txt
+- y_train repersents y_train.txt
+- subject_test represents subject_test.txt
+- X_test represents X_test.txt
+- y_test represents y_test.txt
+
+2 - Each corresponding table for test and train was merged into a single table using rbind. The variables are as follows:
+- merged_subject: combination of subject_train and subject_test
+- merged_X: combination of X_train and X_test
+- merged_y: combination of y_train and y_test
+
+3 - For clarity, I set the variable names for the merged_subject and merged_y data sets using the setnames functio as follows:
+ - for merged_subject, I used V1 and Subject
+ - for merged_y, I used V1 and Activity_Number
+ 
+4 - I extracted lables from the features file to lable the activity data columns
+- First, read the features.txt file into a data table using the read.table function and saved it in a variable called Features
+- Next using the setnames function named the columns Feature_Number and Feature_Name respectively
+- Finally, using the colnames function on merged_X I applied the Feature_Name labes to the dataset
+
+5 - The next step is to merge all of the datasets into a single table called merged_table:
+- Using cbind, combine merged_subject and merged_y to create mergedActSub
+- Using cbind combined mergedActSub and merged_X to create merged_table
+
+6 - Filtered rows with standard deviation and mean
+- Used grep on mean\\(\\)|std\\(\\) on Features_Name to grab all rows with those values in the columns
+ in the Features dataset and saved the value to a varaible called Features_std_mean
+- used union to add the labels Subject and Activity_Number to Features_std_mean and saved it in a dataset called filtered_table
+
+7 - Next, I added descriptive labels to the data table
+- used the merge function to comibine Activity_Labels with the filtered_table on Activity_Number
+
+8 - I created table with means sorted by Activity and Subject called final_table
+- First, I used the aggragate function to create a table with the means, stored in a dataset called aggregated_table
+- Next, I used the arrange function on aggregated_table to sort on Subject, and Activity_Name and saved the dataset to 
+a variable called final_table
+
+9 - The final step was to write the final dataset to a file called CleanData.txt using the write.table function on final_table
+
+
+
+
